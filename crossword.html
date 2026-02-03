@@ -105,6 +105,16 @@
         .clue-item:hover { background-color: #e9ecef; }
         .clue-item.active { background-color: #a7d8ff; font-weight: 600; }
         .clue-number { font-weight: 800; margin-right: 5px; }
+        
+        /* LINKS IN CLUES */
+        .clue-item a {
+            color: #007bff;
+            text-decoration: none;
+            border-bottom: 1px dotted #007bff;
+        }
+        .clue-item a:hover {
+            text-decoration: underline;
+        }
 
         /* WIN MODAL */
         #win-overlay {
@@ -160,7 +170,7 @@
     </div>
 
     <script>
-        // GRID LAYOUT BASED ON SKETCH
+        // GRID LAYOUT
         const gridLayout = [
             ['T', 'E', 'N', 'N', 'I', 'S', '.', '.', '.', '.', '.', '.'],
             ['.', '.', '.', '.', '.', 'I', '.', '.', '.', '.', '.', '.'],
@@ -175,16 +185,16 @@
             ['.', '.', 'E', 'N', 'R', 'O', 'N', '.', '.', '.', '.', '.']
         ];
 
-        // WORD DATA
+        // WORD DATA (UPDATED WITH LINKS AND EMOJIS)
         const words = [
-            { number: 1, direction: 'across', row: 0, col: 0, answer: "TENNIS", clue: "My current favorite sport" },
+            { number: 1, direction: 'across', row: 0, col: 0, answer: "TENNIS", clue: "My current favorite sport 🎾" },
             { number: 1, direction: 'down', row: 0, col: 5, answer: "SIMPSONS", clue: "Yellow, animated family I grew up with" },
             { number: 2, direction: 'across', row: 3, col: 7, answer: "HOTEL", clue: "Dream: Create a murder mystery themed one" },
-            { number: 3, direction: 'down', row: 3, col: 8, answer: "OSTLUND", clue: "Ruben ____ (Director of Triangle of Sadness)" },
-            { number: 4, direction: 'across', row: 5, col: 8, answer: "TCM", clue: "My fav TV channel (promos by Sibling Rivalry)" },
+            { number: 3, direction: 'down', row: 3, col: 8, answer: "OSTLUND", clue: "My favorite director, Ruben _____ (Triangle of Sadness)" },
+            { number: 4, direction: 'across', row: 5, col: 8, answer: "TCM", clue: "My fav TV channel <a href='https://www.siblingrivalry.com/studio/work/project/tcm' target='_blank'>(promos by Sibling Rivalry)</a>" },
             { number: 5, direction: 'across', row: 6, col: 2, answer: "CORNELL", clue: "My and Andy Bernard’s alma mater" },
-            { number: 5, direction: 'down', row: 6, col: 2, answer: "CONDE", clue: "First name of magazine publisher (Vogue, New Yorker)" },
-            { number: 6, direction: 'across', row: 10, col: 2, answer: "ENRON", clue: "____: The Smartest Guys in The Room" }
+            { number: 5, direction: 'down', row: 6, col: 2, answer: "CONDE", clue: "First name of magazine publisher I sell ads for (Vogue, Architectural Digest, The New Yorker, etc.)" },
+            { number: 6, direction: 'across', row: 10, col: 2, answer: "ENRON", clue: "____: <a href='https://www.pbs.org/independentlens/documentaries/enron/' target='_blank'>The Smartest Guys in The Room</a>" }
         ];
 
         let currentDirection = 'across'; 
@@ -230,8 +240,16 @@
                 const el = document.createElement('div');
                 el.className = 'clue-item';
                 el.id = `clue-${index}`;
+                // Using innerHTML to allow links
                 el.innerHTML = `<span class="clue-number">${word.number}</span> ${word.clue}`;
-                el.onclick = () => selectWord(index);
+                
+                // Prevent clicking a link from selecting the word (optional, but good UX)
+                el.onclick = (e) => {
+                    // If they clicked the link, don't trigger word selection logic if you prefer
+                    // But here we allow selection so they can see where the word is.
+                    selectWord(index);
+                };
+                
                 if(word.direction === 'across') acrossCluesElement.appendChild(el);
                 else downCluesElement.appendChild(el);
             });
