@@ -110,4 +110,266 @@
         .dot {
             width: 12px;
             height: 12px;
-            background-color: #5a5
+            background-color: #5a5a5a;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        /* TOAST NOTIFICATION */
+        #toast {
+            visibility: hidden;
+            min-width: 200px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 4px;
+            padding: 10px;
+            position: fixed;
+            z-index: 1;
+            top: 60px;
+            font-size: 0.9rem;
+        }
+        #toast.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 2.5s; }
+
+        /* ANIMATIONS */
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            50% { transform: translateX(5px); }
+            75% { transform: translateX(-5px); }
+            100% { transform: translateX(0); }
+        }
+        .shake { animation: shake 0.4s; }
+        @keyframes popIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+        @keyframes fadein { from {top: 40px; opacity: 0;} to {top: 60px; opacity: 1;} }
+        @keyframes fadeout { from {top: 60px; opacity: 1;} to {top: 40px; opacity: 0;} }
+    </style>
+</head>
+<body>
+
+    <h2>My common threads</h2>
+    <p>Group items by 4 categories.</p>
+
+    <div id="game-container">
+        <div id="solved-container"></div>
+        
+        <div id="grid"></div>
+    </div>
+
+    <div class="controls">
+        <button class="btn" onclick="shuffleGrid()">Shuffle</button>
+        <button class="btn" onclick="deselectAll()">Deselect All</button>
+        <button class="btn btn-submit" id="submit-btn" onclick="submitGuess()" disabled>Submit</button>
+    </div>
+
+    <div class="mistakes-container" id="mistakes-display">
+        Mistakes remaining: 
+        <span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span>
+    </div>
+
+    <div id="toast"></div>
+
+    <script>
+        // DATA SETUP - YOUR CUSTOM CATEGORIES
+        const groups = [
+            {
+                color: "cat-0",
+                name: "MY FAVORITE ONE-WORD MOVIES",
+                items: ["FARGO", "AMADEUS", "NOTORIOUS", "RATATOUILLE"]
+            },
+            {
+                color: "cat-1",
+                name: "WHAT I NEED ON A PICNIC",
+                items: ["GRAPES", "SALAMI", "FRISBEE", "BLANKET"]
+            },
+            {
+                color: "cat-2",
+                // UPDATED CATEGORY NAME HERE
+                name: "THINGS I PREFER PREFIXED WITH \"MINI\"",
+                items: ["GOLF", "HOOP", "COOPER", "SERIES"]
+            },
+            {
+                color: "cat-3",
+                name: "SECTIONS OF MY WIKIPEDIA PAGE",
+                items: ["EARLY LIFE", "LEGAL ISSUES", "CAREER RENAISSANCE", "PHILANTHROPY"]
+            }
+        ];
+
+        let gridItems = [];
+        let selectedItems = [];
+        let mistakes = 4;
+        let isGameOver = false;
+
+        const gridEl = document.getElementById("grid");
+        const solvedContainer = document.getElementById("solved-container");
+        const submitBtn = document.getElementById("submit-btn");
+        const mistakesDisplay = document.getElementById("mistakes-display");
+        const toast = document.getElementById("toast");
+
+        // INITIALIZE
+        function init() {
+            // Flatten items into a single array with ID tracking
+            groups.forEach((group, groupIndex) => {
+                group.items.forEach(item => {
+                    gridItems.push({ text: item, groupIndex: groupIndex });
+                });
+            });
+            shuffleArray(gridItems);
+            renderGrid();
+        }
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        // RENDER GRID
+        function renderGrid() {
+            gridEl.innerHTML = "";
+            gridItems.forEach((item, index) => {
+                const btn = document.createElement("div");
+                btn.className = "tile";
+                if (selectedItems.includes(item)) btn.classList.add("selected");
+                btn.textContent = item.text;
+                btn.onclick = () => handleItemClick(item, index);
+                gridEl.appendChild(btn);
+            });
+            updateSubmitBtn();
+        }
+
+        // HANDLE CLICKS
+        function handleItemClick(item, index) {
+            if (isGameOver) return;
+            
+            const idxInSelected = selectedItems.indexOf(item);
+            if (idxInSelected > -1) {
+                // Deselect
+                selectedItems.splice(idxInSelected, 1);
+            } else {
+                // Select (max 4)
+                if (selectedItems.length < 4) {
+                    selectedItems.push(item);
+                }
+            }
+            renderGrid();
+        }
+
+        function updateSubmitBtn() {
+            submitBtn.disabled = selectedItems.length !== 4;
+        }
+
+        function deselectAll() {
+            if(isGameOver) return;
+            selectedItems = [];
+            renderGrid();
+        }
+
+        function shuffleGrid() {
+            if(isGameOver) return;
+            shuffleArray(gridItems);
+            renderGrid();
+        }
+
+        // SUBMIT LOGIC
+        function submitGuess() {
+            if (selectedItems.length !== 4) return;
+
+            // Check if all selected items belong to the same group
+            const firstGroupIndex = selectedItems[0].groupIndex;
+            const allMatch = selectedItems.every(item => item.groupIndex === firstGroupIndex);
+
+            if (allMatch) {
+                // CORRECT!
+                handleCorrectGuess(firstGroupIndex);
+            } else {
+                // INCORRECT
+                handleIncorrectGuess();
+            }
+        }
+
+        function handleCorrectGuess(groupIndex) {
+            // Remove items from grid
+            gridItems = gridItems.filter(item => !selectedItems.includes(item));
+            selectedItems = [];
+            
+            // Create solved banner
+            const group = groups[groupIndex];
+            const div = document.createElement("div");
+            div.className = `solved-row ${group.color}`;
+            div.innerHTML = `<div class="solved-heading">${group.name}</div><div class="solved-items">${group.items.join(", ")}</div>`;
+            solvedContainer.appendChild(div);
+
+            // Re-render remaining
+            renderGrid();
+
+            // Check Win
+            if (gridItems.length === 0) {
+                showToast("Perfect!");
+                mistakesDisplay.innerHTML = "You Win! 🏆";
+                isGameOver = true;
+                submitBtn.disabled = true;
+            }
+        }
+
+        function handleIncorrectGuess() {
+            // Check for "One Away"
+            const counts = {};
+            selectedItems.forEach(item => {
+                counts[item.groupIndex] = (counts[item.groupIndex] || 0) + 1;
+            });
+            const maxCount = Math.max(...Object.values(counts));
+
+            // Shake Animation
+            gridEl.classList.add("shake");
+            setTimeout(() => gridEl.classList.remove("shake"), 500);
+
+            mistakes--;
+            renderMistakes();
+
+            if (mistakes === 0) {
+                showToast("Game Over");
+                isGameOver = true;
+                submitBtn.disabled = true;
+                revealAnswers(); 
+            } else {
+                if (maxCount === 3) {
+                    showToast("One away...");
+                } else {
+                    showToast("Not quite!");
+                }
+            }
+        }
+
+        function renderMistakes() {
+            let html = "Mistakes remaining: ";
+            for (let i = 0; i < mistakes; i++) {
+                html += '<span class="dot"></span>';
+            }
+            mistakesDisplay.innerHTML = html;
+        }
+
+        function showToast(msg) {
+            toast.textContent = msg;
+            toast.className = "show";
+            setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 3000);
+        }
+
+        function revealAnswers() {
+            gridEl.innerHTML = "";
+            const remainingGroups = [...new Set(gridItems.map(i => i.groupIndex))];
+            remainingGroups.forEach(idx => {
+                const group = groups[idx];
+                const div = document.createElement("div");
+                div.className = `solved-row ${group.color}`;
+                div.innerHTML = `<div class="solved-heading">${group.name}</div><div class="solved-items">${group.items.join(", ")}</div>`;
+                solvedContainer.appendChild(div);
+            });
+            mistakesDisplay.innerHTML = "Better luck next time!";
+        }
+
+        init();
+    </script>
+</body>
+</html>
