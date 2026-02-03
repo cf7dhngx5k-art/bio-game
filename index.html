@@ -117,15 +117,26 @@
       font-weight: 500;
       font-size: 1.1rem;
     }
+    
+    /* NEW IMAGE BUTTON STYLE */
     .btn {
-      display: inline-block;
-      margin-top: 15px;
-      padding: 10px 20px;
+      display: flex;             /* Centering the image */
+      justify-content: center;
+      align-items: center;
+      margin: 15px auto 0 auto;  /* Centers button in popup */
+      width: 80px;               /* Fixed width */
+      height: 80px;              /* Fixed height */
       background: #000;
-      color: white; 
+      border-radius: 12px;
       text-decoration: none;
-      border-radius: 6px;
-      font-size: 2.5rem; 
+      overflow: hidden;          /* Crops image if too big */
+    }
+    
+    /* THE PAWN IMAGE ITSELF */
+    .btn img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;         /* Ensures image fills the square nicely */
     }
 
     @keyframes popIn { from { transform: translate(-50%, -50%) scale(0.9); opacity: 0; } to { transform: translate(-50%, -50%) scale(1); opacity: 1; } }
@@ -160,7 +171,11 @@
     <div class="bio-text">
       <p>Add me on chess.com<br>@Maxwell99 😤</p>
     </div>
-    <a href="https://link.chess.com/friend/zyYvAH" target="_blank" class="btn">♙</a>
+    
+    <a href="https://link.chess.com/friend/zyYvAH" target="_blank" class="btn">
+      <img src="pawn.jpg" alt="White Pawn">
+    </a>
+    
   </div>
 
   <script>
