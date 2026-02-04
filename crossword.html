@@ -31,22 +31,21 @@
             max-width: 800px;
         }
 
-        /* GRID - Fixed width columns to prevent collapse */
+        /* GRID - FORCED VISIBILITY */
         #crossword-grid {
             display: grid;
-            grid-template-columns: repeat(12, 30px); /* FORCE SIZE */
-            grid-template-rows: repeat(11, 30px);    /* FORCE SIZE */
+            grid-template-columns: repeat(12, 30px);
+            grid-template-rows: repeat(11, 30px);
             gap: 2px;
             background-color: #000;
             padding: 2px;
             border: 2px solid #000;
-            margin: 0 auto; 
         }
 
         .cell {
             width: 30px;
             height: 30px;
-            background-color: #fff;
+            background-color: #fff !important; /* Force White */
             position: relative;
             display: flex;
             justify-content: center;
@@ -59,25 +58,23 @@
         }
 
         .cell.black {
-            background-color: #000;
+            background-color: #000 !important;
             cursor: default;
             border: none;
         }
 
-        .cell.selected { background-color: #a7d8ff; }
-        .cell.related { background-color: #e8f5ff; }
+        .cell.selected { background-color: #a7d8ff !important; }
+        .cell.related { background-color: #e8f5ff !important; }
 
         .cell .number {
             position: absolute;
-            top: 1px;
-            left: 2px;
+            top: 1px; left: 2px;
             font-size: 0.5rem;
             font-weight: normal;
             color: #333;
+            pointer-events: none;
         }
-
-        .cell .letter { z-index: 1; }
-
+        
         /* CLUES */
         #clues-container {
             display: flex;
@@ -87,17 +84,13 @@
             margin-top: 10px;
             gap: 20px;
         }
-
         .clue-column {
             flex: 1;
             background: #f8f9fa;
             padding: 15px;
             border-radius: 8px;
-            min-width: 250px; 
         }
-
         h3 { font-size: 1rem; margin-top: 0; border-bottom: 2px solid #ddd; padding-bottom: 5px; }
-
         .clue-item {
             font-size: 0.85rem;
             margin-bottom: 8px;
@@ -108,16 +101,7 @@
         .clue-item:hover { background-color: #e9ecef; }
         .clue-item.active { background-color: #a7d8ff; font-weight: 600; }
         .clue-number { font-weight: 800; margin-right: 5px; }
-        
-        /* LINKS IN CLUES */
-        .clue-item a {
-            color: #007bff;
-            text-decoration: none;
-            border-bottom: 1px dotted #007bff;
-        }
-        .clue-item a:hover {
-            text-decoration: underline;
-        }
+        .clue-item a { color: #007bff; text-decoration: none; border-bottom: 1px dotted #007bff; }
 
         /* WIN MODAL */
         #win-overlay {
@@ -156,16 +140,99 @@
     <p>Tap a clue or cell to start.</p>
 
     <div id="game-container">
-        <div id="crossword-grid"></div>
+        <div id="crossword-grid">
+            <div class="cell" data-r="0" data-c="0" data-a="T"><span class="number">1</span><span class="letter"></span></div>
+            <div class="cell" data-r="0" data-c="1" data-a="E"><span class="letter"></span></div>
+            <div class="cell" data-r="0" data-c="2" data-a="N"><span class="letter"></span></div>
+            <div class="cell" data-r="0" data-c="3" data-a="N"><span class="letter"></span></div>
+            <div class="cell" data-r="0" data-c="4" data-a="I"><span class="letter"></span></div>
+            <div class="cell" data-r="0" data-c="5" data-a="S"><span class="number">1</span><span class="letter"></span></div>
+            <div class="cell black"></div><div class="cell black"></div><div class="cell black"></div><div class="cell black"></div><div class="cell black"></div><div class="cell black"></div>
+            
+            <div class="cell black"></div><div class="cell black"></div><div class="cell black"></div><div class="cell black"></div><div class="cell black"></div>
+            <div class="cell" data-r="1" data-c="5" data-a="I"><span class="letter"></span></div>
+            <div class="cell black"></div><div class="cell black"></div><div class="cell black"></div><div class="cell black"></div><div class="cell black"></div><div class="cell black"></div>
+
+            <div class="cell black"></div><div class="cell black"></div><div class="cell black"></div><div class="cell black"></div><div class="cell black"></div>
+            <div class="cell" data-r="2" data-c="5" data-a="M"><span class="letter"></span></div>
+            <div class="cell black"></div><div class="cell black"></div><div class="cell black"></div><div class="cell black"></div><div class="cell black"></div><div class="cell black"></div>
+
+            <div class="cell black"></div><div class="cell black"></div><div class="cell black"></div><div class="cell black"></div><div class="cell black"></div>
+            <div class="cell" data-r="3" data-c="5" data-a="P"><span class="letter"></span></div>
+            <div class="cell black"></div>
+            <div class="cell" data-r="3" data-c="7" data-a="H"><span class="number">2</span><span class="letter"></span></div>
+            <div class="cell" data-r="3" data-c="8" data-a="O"><span class="number">3</span><span class="letter"></span></div>
+            <div class="cell" data-r="3" data-c="9" data-a="T"><span class="letter"></span></div>
+            <div class="cell" data-r="3" data-c="10" data-a="E"><span class="letter"></span></div>
+            <div class="cell" data-r="3" data-c="11" data-a="L"><span class="letter"></span></div>
+
+            <div class="cell black"></div><div class="cell black"></div><div class="cell black"></div><div class="cell black"></div><div class="cell black"></div>
+            <div class="cell" data-r="4" data-c="5" data-a="S"><span class="letter"></span></div>
+            <div class="cell black"></div><div class="cell black"></div>
+            <div class="cell" data-r="4" data-c="8" data-a="S"><span class="letter"></span></div>
+            <div class="cell black"></div><div class="cell black"></div><div class="cell black"></div>
+
+            <div class="cell black"></div><div class="cell black"></div><div class="cell black"></div><div class="cell black"></div><div class="cell black"></div>
+            <div class="cell" data-r="5" data-c="5" data-a="O"><span class="letter"></span></div>
+            <div class="cell black"></div><div class="cell black"></div>
+            <div class="cell" data-r="5" data-c="8" data-a="T"><span class="number">4</span><span class="letter"></span></div>
+            <div class="cell" data-r="5" data-c="9" data-a="C"><span class="letter"></span></div>
+            <div class="cell" data-r="5" data-c="10" data-a="M"><span class="letter"></span></div>
+            <div class="cell black"></div>
+
+            <div class="cell black"></div><div class="cell black"></div>
+            <div class="cell" data-r="6" data-c="2" data-a="C"><span class="number">5</span><span class="letter"></span></div>
+            <div class="cell" data-r="6" data-c="3" data-a="O"><span class="letter"></span></div>
+            <div class="cell" data-r="6" data-c="4" data-a="R"><span class="letter"></span></div>
+            <div class="cell" data-r="6" data-c="5" data-a="N"><span class="letter"></span></div>
+            <div class="cell" data-r="6" data-c="6" data-a="E"><span class="letter"></span></div>
+            <div class="cell" data-r="6" data-c="7" data-a="L"><span class="letter"></span></div>
+            <div class="cell" data-r="6" data-c="8" data-a="L"><span class="letter"></span></div>
+            <div class="cell black"></div><div class="cell black"></div><div class="cell black"></div>
+
+            <div class="cell black"></div><div class="cell black"></div>
+            <div class="cell" data-r="7" data-c="2" data-a="O"><span class="letter"></span></div>
+            <div class="cell black"></div><div class="cell black"></div>
+            <div class="cell" data-r="7" data-c="5" data-a="S"><span class="letter"></span></div>
+            <div class="cell black"></div><div class="cell black"></div>
+            <div class="cell" data-r="7" data-c="8" data-a="U"><span class="letter"></span></div>
+            <div class="cell black"></div><div class="cell black"></div><div class="cell black"></div>
+
+            <div class="cell black"></div><div class="cell black"></div>
+            <div class="cell" data-r="8" data-c="2" data-a="N"><span class="letter"></span></div>
+            <div class="cell black"></div><div class="cell black"></div><div class="cell black"></div><div class="cell black"></div><div class="cell black"></div>
+            <div class="cell" data-r="8" data-c="8" data-a="N"><span class="letter"></span></div>
+            <div class="cell black"></div><div class="cell black"></div><div class="cell black"></div>
+
+            <div class="cell black"></div><div class="cell black"></div>
+            <div class="cell" data-r="9" data-c="2" data-a="D"><span class="letter"></span></div>
+            <div class="cell black"></div><div class="cell black"></div><div class="cell black"></div><div class="cell black"></div><div class="cell black"></div>
+            <div class="cell" data-r="9" data-c="8" data-a="D"><span class="letter"></span></div>
+            <div class="cell black"></div><div class="cell black"></div><div class="cell black"></div>
+
+            <div class="cell black"></div><div class="cell black"></div>
+            <div class="cell" data-r="10" data-c="2" data-a="E"><span class="number">6</span><span class="letter"></span></div>
+            <div class="cell" data-r="10" data-c="3" data-a="N"><span class="letter"></span></div>
+            <div class="cell" data-r="10" data-c="4" data-a="R"><span class="letter"></span></div>
+            <div class="cell" data-r="10" data-c="5" data-a="O"><span class="letter"></span></div>
+            <div class="cell" data-r="10" data-c="6" data-a="N"><span class="letter"></span></div>
+            <div class="cell black"></div><div class="cell black"></div><div class="cell black"></div><div class="cell black"></div><div class="cell black"></div>
+        </div>
 
         <div id="clues-container">
             <div class="clue-column">
                 <h3>Across</h3>
-                <div id="across-clues"></div>
+                <div class="clue-item" id="clue-0" onclick="selectWord(0)"><span class="clue-number">1</span> My current favorite sport 🎾</div>
+                <div class="clue-item" id="clue-2" onclick="selectWord(2)"><span class="clue-number">2</span> Dream: Create a murder mystery themed one</div>
+                <div class="clue-item" id="clue-4" onclick="selectWord(4)"><span class="clue-number">4</span> My fav TV channel <a href='https://www.siblingrivalry.com/studio/work/project/tcm' target='_blank'>(promos by Sibling Rivalry)</a></div>
+                <div class="clue-item" id="clue-5" onclick="selectWord(5)"><span class="clue-number">5</span> My and Andy Bernard’s alma mater</div>
+                <div class="clue-item" id="clue-7" onclick="selectWord(7)"><span class="clue-number">6</span> ____: <a href='https://www.pbs.org/independentlens/documentaries/enron/' target='_blank'>The Smartest Guys in The Room</a> (a doc I love)</div>
             </div>
             <div class="clue-column">
                 <h3>Down</h3>
-                <div id="down-clues"></div>
+                <div class="clue-item" id="clue-1" onclick="selectWord(1)"><span class="clue-number">1</span> Favorite show's titular family</div>
+                <div class="clue-item" id="clue-3" onclick="selectWord(3)"><span class="clue-number">3</span> My favorite director, Ruben _____ (Triangle of Sadness)</div>
+                <div class="clue-item" id="clue-6" onclick="selectWord(6)"><span class="clue-number">5</span> First name of magazine publisher I sell ads for (Vogue, Architectural Digest, The New Yorker, etc.)</div>
             </div>
         </div>
     </div>
@@ -177,20 +244,133 @@
     </div>
 
     <script>
-        // --- ERROR CATCHER ---
-        window.onerror = function(msg, url, line) {
-            alert("Error: " + msg + "\nLine: " + line);
-        };
+        // LOGIC SCRIPT
+        const words = [
+            { id:0, direction:'across', row:0, col:0, len:6 }, // TENNIS
+            { id:1, direction:'down',   row:0, col:5, len:8 }, // SIMPSONS
+            { id:2, direction:'across', row:3, col:7, len:5 }, // HOTEL
+            { id:3, direction:'down',   row:3, col:8, len:7 }, // OSTLUND
+            { id:4, direction:'across', row:5, col:8, len:3 }, // TCM
+            { id:5, direction:'across', row:6, col:2, len:7 }, // CORNELL
+            { id:6, direction:'down',   row:6, col:2, len:5 }, // CONDE
+            { id:7, direction:'across', row:10,col:2, len:5 }  // ENRON
+        ];
 
-        document.addEventListener("DOMContentLoaded", () => {
-            // GRID LAYOUT
-            const gridLayout = [
-                ['T', 'E', 'N', 'N', 'I', 'S', '.', '.', '.', '.', '.', '.'],
-                ['.', '.', '.', '.', '.', 'I', '.', '.', '.', '.', '.', '.'],
-                ['.', '.', '.', '.', '.', 'M', '.', '.', '.', '.', '.', '.'],
-                ['.', '.', '.', '.', '.', 'P', '.', 'H', 'O', 'T', 'E', 'L'],
-                ['.', '.', '.', '.', '.', 'S', '.', '.', 'S', '.', '.', '.'],
-                ['.', '.', '.', '.', '.', 'O', '.', '.', 'T', 'C', 'M', '.'],
-                ['.', '.', 'C', 'O', 'R', 'N', 'E', 'L', 'L', '.', '.', '.'],
-                ['.', '.', 'O', '.', '.', 'S', '.', '.', 'U', '.', '.', '.'],
-                ['.', '.',
+        let currentWordIndex = 0;
+        let currentDirection = 'across';
+
+        // Select first word immediately
+        selectWord(0);
+
+        function selectWord(index) {
+            currentWordIndex = index;
+            const word = words[index];
+            currentDirection = word.direction;
+
+            // Clear previous styles
+            document.querySelectorAll('.cell').forEach(c => c.classList.remove('selected', 'related'));
+            document.querySelectorAll('.clue-item').forEach(c => c.classList.remove('active'));
+
+            // Highlight new word
+            for(let i=0; i<word.len; i++) {
+                let r = word.row + (word.direction === 'down' ? i : 0);
+                let c = word.col + (word.direction === 'across' ? i : 0);
+                const cell = document.querySelector(`.cell[data-r="${r}"][data-c="${c}"]`);
+                if(cell) {
+                    cell.classList.add('related');
+                    if(i===0) cell.classList.add('selected');
+                }
+            }
+            const clue = document.getElementById(`clue-${index}`);
+            if(clue) clue.classList.add('active');
+        }
+
+        // Cell Click Handling
+        document.querySelectorAll('.cell:not(.black)').forEach(cell => {
+            cell.addEventListener('click', () => {
+                const r = parseInt(cell.dataset.r);
+                const c = parseInt(cell.dataset.c);
+                
+                // Find words intersecting this cell
+                const matches = words.filter(w => {
+                    if(w.direction === 'across') return w.row === r && c >= w.col && c < w.col + w.len;
+                    else return w.col === c && r >= w.row && r < w.row + w.len;
+                });
+
+                if(matches.length === 1) {
+                    selectWord(matches[0].id);
+                } else if(matches.length > 1) {
+                    // Toggle if clicking active cell, otherwise pick best fit
+                    const current = words[currentWordIndex];
+                    if(matches.some(m => m.id === current.id) && cell.classList.contains('selected')) {
+                        const other = matches.find(m => m.id !== current.id);
+                        selectWord(other.id);
+                    } else {
+                        // Default to Across if available
+                        const pref = matches.find(w => w.direction === 'across') || matches[0];
+                        selectWord(pref.id);
+                    }
+                }
+                
+                // Move selection visual to this cell (cursor)
+                document.querySelectorAll('.cell').forEach(cl => cl.classList.remove('selected'));
+                cell.classList.add('selected');
+            });
+        });
+
+        // Typing Logic
+        document.addEventListener('keydown', (e) => {
+            const word = words[currentWordIndex];
+            const char = e.key.toUpperCase();
+            
+            let cursor = document.querySelector('.cell.selected');
+            if(!cursor) return;
+            
+            let r = parseInt(cursor.dataset.r);
+            let c = parseInt(cursor.dataset.c);
+            let idx = (word.direction === 'across') ? (c - word.col) : (r - word.row);
+
+            if(/^[A-Z]$/.test(char)) {
+                // Type
+                cursor.querySelector('.letter').innerText = char;
+                checkWin();
+                
+                // Advance Cursor
+                if(idx < word.len - 1) {
+                    let nextR = r + (word.direction === 'down' ? 1 : 0);
+                    let nextC = c + (word.direction === 'across' ? 1 : 0);
+                    updateCursor(nextR, nextC);
+                }
+            } else if(e.key === 'Backspace') {
+                // Delete
+                if(cursor.querySelector('.letter').innerText !== "") {
+                    cursor.querySelector('.letter').innerText = "";
+                } else {
+                    // Move Back
+                    if(idx > 0) {
+                        let prevR = r - (word.direction === 'down' ? 1 : 0);
+                        let prevC = c - (word.direction === 'across' ? 1 : 0);
+                        updateCursor(prevR, prevC);
+                    }
+                }
+            }
+        });
+
+        function updateCursor(r, c) {
+            document.querySelectorAll('.cell').forEach(cl => cl.classList.remove('selected'));
+            const next = document.querySelector(`.cell[data-r="${r}"][data-c="${c}"]`);
+            if(next) next.classList.add('selected');
+        }
+
+        function checkWin() {
+            let allGood = true;
+            document.querySelectorAll('.cell:not(.black)').forEach(cell => {
+                if(cell.querySelector('.letter').innerText !== cell.dataset.a) allGood = false;
+            });
+            if(allGood) {
+                setTimeout(() => { document.getElementById('win-overlay').style.display = 'block'; }, 500);
+            }
+        }
+    </script>
+</body>
+</html>
