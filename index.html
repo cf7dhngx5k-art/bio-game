@@ -1,73 +1,57 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Wordle Bio</title>
   <style>
-    /* RESET */
+    /* RESET & LAYOUT */
     * { box-sizing: border-box; }
-    
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       background-color: #FFFFFF;
       margin: 0;
-      padding: 0;
-      width: 100%;
-      min-height: 100vh;
+      padding: 20px;
       display: flex;
       flex-direction: column;
       align-items: center;
-      overflow-x: hidden; 
+      min-height: 100vh;
     }
 
     /* HEADER */
-    #game-header {
+    header {
       text-align: center;
-      margin-top: 20px;
       margin-bottom: 20px;
-      width: 100%;
-      padding: 0 10px;
     }
     h2 { font-size: 1.8rem; margin: 0 0 10px 0; letter-spacing: -0.5px; }
     p { font-size: 1rem; color: #666; margin: 0; }
 
-    /* ANCHOR CONTAINER */
-    #anchor-container {
-      width: 260px; /* Slightly wider to prevent wrap */
-      margin: 0 auto; 
-      position: relative; 
+    /* GRID CONTAINER */
+    #game-container {
       display: flex;
       flex-direction: column;
       align-items: center;
+      gap: 5px;
     }
 
-    /* GRID */
-    .grid {
-      display: grid;
-      grid-template-rows: repeat(6, auto); /* Changed to auto to force height */
-      gap: 5px;
-      width: 100%;
-    }
+    /* ROWS & TILES */
     .row {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
       gap: 5px;
-      width: 100%;
     }
     .tile {
-      width: 46px;
-      height: 46px;
+      width: 50px;
+      height: 50px;
       border: 2px solid #d3d6da;
       display: flex;
       justify-content: center;
       align-items: center;
       font-size: 1.8rem;
-      font-weight: bold;
+      font-weight: 700;
       text-transform: uppercase;
-      user-select: none;
       color: #000;
-      background: #fff; /* Ensure white background */
+      background: #fff;
     }
 
     /* COLORS */
@@ -75,182 +59,181 @@
     .present { background-color: #c9b458; color: white; border-color: #c9b458; }
     .absent { background-color: #787c7e; color: white; border-color: #787c7e; }
 
-    /* HINTS COLUMN */
-    #right-column {
-      position: absolute;
-      left: 275px; 
-      top: 0;
-      width: 180px; 
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
+    /* MESSAGE BOX */
+    #message-box {
+      margin-top: 20px;
+      min-height: 40px;
+      width: 100%;
+      max-width: 300px;
+      text-align: center;
+    }
+    .phrase {
+      background: #f0f0f0;
+      padding: 10px;
+      border-left: 4px solid #eb5757;
+      border-radius: 4px;
+      font-size: 0.9rem;
       text-align: left;
     }
 
-    .phrase-box {
-      font-size: 0.8rem; 
-      line-height: 1.3;
-      background: #f0f0f0;
-      padding: 10px;
-      border-radius: 6px;
-      border-left: 4px solid #eb5757;
-      animation: fadeIn 0.5s ease;
-      word-wrap: break-word; 
-    }
-
-    /* SUCCESS POPUP */
+    /* POPUP OVERLAY */
     #bio-overlay {
-      display: none;
+      display: none; /* Hidden by default */
       position: fixed;
-      top: 50%; 
-      left: 50%;
+      top: 50%; left: 50%;
       transform: translate(-50%, -50%);
       width: 300px;
       background: white;
       border: 2px solid #333;
       border-radius: 12px;
-      padding: 25px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-      z-index: 999;
-      animation: popIn 0.3s ease;
+      padding: 30px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+      z-index: 2000;
       text-align: center;
     }
-    .bio-text { 
-      text-align: center; 
-      line-height: 1.5; 
-      margin-top: 15px; 
-      font-weight: 500;
-      font-size: 1.1rem;
-    }
-    
-    /* NEW IMAGE BUTTON STYLE */
+
+    /* PAWN BUTTON */
     .btn {
-      display: flex;             
-      justify-content: center;
-      align-items: center;
-      margin: 15px auto 0 auto;  
-      width: 80px;               
-      height: 80px;              
-      background: #000;
+      display: block;
+      margin: 20px auto 0 auto;
+      width: 80px;
+      height: 80px;
       border-radius: 12px;
-      text-decoration: none;
-      overflow: hidden;          
+      overflow: hidden;
+      border: 1px solid #ccc;
     }
-    
     .btn img {
       width: 100%;
       height: 100%;
-      object-fit: cover;         
-    }
-
-    @keyframes popIn { from { transform: translate(-50%, -50%) scale(0.9); opacity: 0; } to { transform: translate(-50%, -50%) scale(1); opacity: 1; } }
-    @keyframes fadeIn { from { opacity: 0; transform: translateX(10px); } to { opacity: 1; transform: translateX(0); } }
-
-    /* MOBILE RESPONSIVE */
-    @media (max-width: 600px) {
-      #anchor-container { width: 100%; max-width: 300px; }
-      #right-column {
-        position: static;
-        width: 100%;
-        margin-top: 20px;
-        padding: 0 10px;
-      }
+      object-fit: cover;
     }
   </style>
 </head>
 <body>
 
-  <div id="game-header">
+  <header>
     <h2>My favorite hobby</h2>
     <p>Guess the 5-letter word.</p>
+  </header>
+
+  <div id="game-container">
+    <div class="row">
+      <div class="tile"></div><div class="tile"></div><div class="tile"></div><div class="tile"></div><div class="tile"></div>
+    </div>
+    <div class="row">
+      <div class="tile"></div><div class="tile"></div><div class="tile"></div><div class="tile"></div><div class="tile"></div>
+    </div>
+    <div class="row">
+      <div class="tile"></div><div class="tile"></div><div class="tile"></div><div class="tile"></div><div class="tile"></div>
+    </div>
+    <div class="row">
+      <div class="tile"></div><div class="tile"></div><div class="tile"></div><div class="tile"></div><div class="tile"></div>
+    </div>
+    <div class="row">
+      <div class="tile"></div><div class="tile"></div><div class="tile"></div><div class="tile"></div><div class="tile"></div>
+    </div>
+    <div class="row">
+      <div class="tile"></div><div class="tile"></div><div class="tile"></div><div class="tile"></div><div class="tile"></div>
+    </div>
   </div>
 
-  <div id="anchor-container">
-    <div id="grid" class="grid"></div>
-    <div id="right-column"></div>
-  </div>
+  <div id="message-box"></div>
 
   <div id="bio-overlay">
     <h2>Nailed it!</h2>
-    <div class="bio-text">
-      <p>Add me on chess.com<br>@Maxwell99 😤</p>
-    </div>
-    
+    <p>Add me on chess.com<br>@Maxwell99 😤</p>
     <a href="https://link.chess.com/friend/zyYvAH" target="_blank" class="btn">
       <img src="pawn.jpg" alt="White Pawn">
     </a>
-    
   </div>
 
   <script>
-    document.addEventListener("DOMContentLoaded", () => {
-        const TARGET_WORD = "CHESS"; 
-        
-        const PHRASES = [
-          "What an intelligent starting guess! But no; the word is something I'm addicted to...",
-          "I'm flattered. But think of something that involves two people.",
-          "Ran out of intelligent guesses I see. Perhaps checkers would be more your style.",
-          "Keep trying. You can still be a grandmaster in not giving up.",
-          "This is sad. I think it best we go our separate ways.",
-          "You're still here?"
-        ];
-        
-        const MAX_GUESSES = 6;
-        let guesses = [];
-        let currentGuess = "";
-        let gameOver = false;
-        let wrongGuessCount = 0;
+    // GAME LOGIC
+    const TARGET_WORD = "CHESS";
+    const PHRASES = [
+      "What an intelligent starting guess! But no; the word is something I'm addicted to...",
+      "I'm flattered. But think of something that involves two people.",
+      "Ran out of intelligent guesses I see. Perhaps checkers would be more your style.",
+      "Keep trying. You can still be a grandmaster in not giving up.",
+      "This is sad. I think it best we go our separate ways.",
+      "You're still here?"
+    ];
 
-        const grid = document.getElementById("grid");
-        const rightCol = document.getElementById("right-column");
-        const bio = document.getElementById("bio-overlay");
+    let currentGuess = "";
+    let guessCount = 0;
+    let gameOver = false;
 
-        function initGrid() {
-          if (!grid) {
-              console.error("Grid element not found!");
-              return;
-          }
-          grid.innerHTML = ""; // Clear existing grid just in case
-          for (let i = 0; i < MAX_GUESSES; i++) {
-            let row = document.createElement("div");
-            row.className = "row";
-            for (let j = 0; j < 5; j++) {
-              let tile = document.createElement("div");
-              tile.className = "tile";
-              row.appendChild(tile);
-            }
-            grid.appendChild(row);
+    // Grab the rows we hard-coded
+    const rows = document.querySelectorAll(".row");
+    const msgBox = document.getElementById("message-box");
+    const popup = document.getElementById("bio-overlay");
+
+    function updateGrid() {
+      const currentRow = rows[guessCount];
+      const tiles = currentRow.children;
+      for (let i = 0; i < 5; i++) {
+        tiles[i].textContent = currentGuess[i] || "";
+      }
+    }
+
+    function showPhrase() {
+      if (guessCount > 0 && guessCount <= PHRASES.length) {
+        msgBox.innerHTML = `<div class="phrase">${PHRASES[guessCount - 1]}</div>`;
+      }
+    }
+
+    function checkWin() {
+      const currentRow = rows[guessCount];
+      const tiles = currentRow.children;
+      const guessArr = currentGuess.split("");
+      const targetArr = TARGET_WORD.split("");
+
+      // 1. GREEN PASS
+      guessArr.forEach((char, i) => {
+        if (char === targetArr[i]) {
+          tiles[i].classList.add("correct");
+          targetArr[i] = null;
+        }
+      });
+
+      // 2. YELLOW PASS
+      guessArr.forEach((char, i) => {
+        if (!tiles[i].classList.contains("correct")) {
+          if (targetArr.includes(char)) {
+            tiles[i].classList.add("present");
+            targetArr[targetArr.indexOf(char)] = null;
+          } else {
+            tiles[i].classList.add("absent");
           }
         }
+      });
 
-        function addPhrase() {
-          const phraseText = PHRASES[wrongGuessCount - 1];
-          if (phraseText) {
-            const box = document.createElement("div");
-            box.className = "phrase-box";
-            box.textContent = phraseText;
-            rightCol.appendChild(box);
-          }
-        }
+      if (currentGuess === TARGET_WORD) {
+        gameOver = true;
+        setTimeout(() => { popup.style.display = "block"; }, 500);
+      } else {
+        guessCount++;
+        showPhrase();
+        if (guessCount >= 6) gameOver = true;
+      }
+      currentGuess = "";
+    }
 
-        function updateGrid() {
-          const row = grid.children[guesses.length];
-          for (let i = 0; i < 5; i++) {
-            row.children[i].textContent = currentGuess[i] || "";
-          }
-        }
+    // CONTROLS
+    document.addEventListener("keydown", (e) => {
+      if (gameOver) return;
+      const key = e.key.toUpperCase();
 
-        function submitGuess() {
-          if (currentGuess.length !== 5) return;
-          const row = grid.children[guesses.length];
-          const targetArr = TARGET_WORD.split("");
-          const guessArr = currentGuess.split("");
-
-          guessArr.forEach((char, i) => {
-            if (char === targetArr[i]) {
-              row.children[i].classList.add("correct");
-              targetArr[i] = null;
-            }
-          });
-          guessArr.forEach((char, i) => {
-            if (!row.children[i].classList.contains("
+      if (key === "ENTER") {
+        if (currentGuess.length === 5) checkWin();
+      } else if (key === "BACKSPACE") {
+        currentGuess = currentGuess.slice(0, -1);
+        updateGrid();
+      } else if (/^[A-Z]$/.test(key) && currentGuess.length < 5) {
+        currentGuess += key;
+        updateGrid();
+      }
+    });
+  </script>
+</body>
+</html>
