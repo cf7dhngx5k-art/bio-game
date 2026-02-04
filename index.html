@@ -157,7 +157,7 @@
 <body>
 
   <div id="game-header">
-    <h2>My favorite hobby.</h2>
+    <h2>My favorite hobby</h2>
     <p>Guess the 5-letter word.</p>
   </div>
 
@@ -181,8 +181,9 @@
   <script>
     const TARGET_WORD = "CHESS"; 
     
+    // UPDATED PHRASES
     const PHRASES = [
-      "What an intelligent starting word! You must be attractive and wealthy. But no; the word is something I'm addicted to...",
+      "What an intelligent starting guess! But no; the word is something I'm addicted to...",
       "I'm flattered. But think of something that involves two people.",
       "Ran out of intelligent guesses I see. Perhaps checkers would be more your style.",
       "Keep trying. You can still be a grandmaster in not giving up.",
@@ -230,56 +231,3 @@
         row.children[i].textContent = currentGuess[i] || "";
       }
     }
-
-    function submitGuess() {
-      if (currentGuess.length !== 5) return;
-      const row = grid.children[guesses.length];
-      const targetArr = TARGET_WORD.split("");
-      const guessArr = currentGuess.split("");
-
-      guessArr.forEach((char, i) => {
-        if (char === targetArr[i]) {
-          row.children[i].classList.add("correct");
-          targetArr[i] = null;
-        }
-      });
-      guessArr.forEach((char, i) => {
-        if (!row.children[i].classList.contains("correct") && targetArr.includes(char)) {
-          row.children[i].classList.add("present");
-          targetArr[targetArr.indexOf(char)] = null;
-        } else if (!row.children[i].classList.contains("correct")) {
-          row.children[i].classList.add("absent");
-        }
-      });
-
-      if (currentGuess === TARGET_WORD) {
-        gameOver = true;
-        setTimeout(() => { bio.style.display = "block"; }, 500);
-      } else {
-        wrongGuessCount++;
-        addPhrase();
-        if (guesses.length === MAX_GUESSES - 1) {
-          gameOver = true;
-        }
-      }
-      guesses.push(currentGuess);
-      currentGuess = "";
-    }
-
-    document.addEventListener("keydown", (e) => {
-      if (gameOver) return;
-      const key = e.key.toUpperCase();
-      if (key === "ENTER") submitGuess();
-      else if (key === "BACKSPACE") {
-        currentGuess = currentGuess.slice(0, -1);
-        updateGrid();
-      } else if (/^[A-Z]$/.test(key) && currentGuess.length < 5) {
-        currentGuess += key;
-        updateGrid();
-      }
-    });
-
-    initGrid();
-  </script>
-</body>
-</html>
