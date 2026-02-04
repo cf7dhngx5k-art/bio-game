@@ -31,14 +31,16 @@
             max-width: 800px;
         }
 
-        /* GRID */
+        /* GRID - Fixed width columns to prevent collapse */
         #crossword-grid {
             display: grid;
-            grid-template-columns: repeat(12, 1fr); /* 12 Cols for layout */
+            grid-template-columns: repeat(12, 30px); /* FORCE SIZE */
+            grid-template-rows: repeat(11, 30px);    /* FORCE SIZE */
             gap: 2px;
             background-color: #000;
             padding: 2px;
             border: 2px solid #000;
+            margin: 0 auto; 
         }
 
         .cell {
@@ -91,6 +93,7 @@
             background: #f8f9fa;
             padding: 15px;
             border-radius: 8px;
+            min-width: 250px; 
         }
 
         h3 { font-size: 1rem; margin-top: 0; border-bottom: 2px solid #ddd; padding-bottom: 5px; }
@@ -139,7 +142,11 @@
 
         @media (max-width: 600px) {
             #clues-container { flex-direction: column; }
-            .cell { width: 26px; height: 26px; font-size: 0.9rem; }
+            #crossword-grid { 
+                grid-template-columns: repeat(12, 24px); 
+                grid-template-rows: repeat(11, 24px);
+            }
+            .cell { width: 24px; height: 24px; font-size: 0.8rem; }
         }
     </style>
 </head>
@@ -170,28 +177,20 @@
     </div>
 
     <script>
-        // GRID LAYOUT
-        const gridLayout = [
-            ['T', 'E', 'N', 'N', 'I', 'S', '.', '.', '.', '.', '.', '.'],
-            ['.', '.', '.', '.', '.', 'I', '.', '.', '.', '.', '.', '.'],
-            ['.', '.', '.', '.', '.', 'M', '.', '.', '.', '.', '.', '.'],
-            ['.', '.', '.', '.', '.', 'P', '.', 'H', 'O', 'T', 'E', 'L'],
-            ['.', '.', '.', '.', '.', 'S', '.', '.', 'S', '.', '.', '.'],
-            ['.', '.', '.', '.', '.', 'O', '.', '.', 'T', 'C', 'M', '.'],
-            ['.', '.', 'C', 'O', 'R', 'N', 'E', 'L', 'L', '.', '.', '.'],
-            ['.', '.', 'O', '.', '.', 'S', '.', '.', 'U', '.', '.', '.'],
-            ['.', '.', 'N', '.', '.', '.', '.', '.', 'N', '.', '.', '.'],
-            ['.', '.', 'D', '.', '.', '.', '.', '.', 'D', '.', '.', '.'],
-            ['.', '.', 'E', 'N', 'R', 'O', 'N', '.', '.', '.', '.', '.']
-        ];
+        // --- ERROR CATCHER ---
+        window.onerror = function(msg, url, line) {
+            alert("Error: " + msg + "\nLine: " + line);
+        };
 
-        // WORD DATA (UPDATED)
-        const words = [
-            { number: 1, direction: 'across', row: 0, col: 0, answer: "TENNIS", clue: "My current favorite sport 🎾" },
-            { number: 1, direction: 'down', row: 0, col: 5, answer: "SIMPSONS", clue: "Favorite show's titular family" },
-            { number: 2, direction: 'across', row: 3, col: 7, answer: "HOTEL", clue: "Dream: Create a murder mystery themed one" },
-            { number: 3, direction: 'down', row: 3, col: 8, answer: "OSTLUND", clue: "My favorite director, Ruben _____ (Triangle of Sadness)" },
-            { number: 4, direction: 'across', row: 5, col: 8, answer: "TCM", clue: "My fav TV channel <a href='https://www.siblingrivalry.com/studio/work/project/tcm' target='_blank'>(promos by Sibling Rivalry)</a>" },
-            { number: 5, direction: 'across', row: 6, col: 2, answer: "CORNELL", clue: "My and Andy Bernard’s alma mater" },
-            { number: 5, direction: 'down', row: 6, col: 2, answer: "CONDE", clue: "First name of magazine publisher I sell ads for (Vogue, Architectural Digest, The New Yorker, etc.)" },
-            { number: 6, direction: 'across', row: 10, col: 2, answer: "ENRON", clue: "____: <a href='
+        document.addEventListener("DOMContentLoaded", () => {
+            // GRID LAYOUT
+            const gridLayout = [
+                ['T', 'E', 'N', 'N', 'I', 'S', '.', '.', '.', '.', '.', '.'],
+                ['.', '.', '.', '.', '.', 'I', '.', '.', '.', '.', '.', '.'],
+                ['.', '.', '.', '.', '.', 'M', '.', '.', '.', '.', '.', '.'],
+                ['.', '.', '.', '.', '.', 'P', '.', 'H', 'O', 'T', 'E', 'L'],
+                ['.', '.', '.', '.', '.', 'S', '.', '.', 'S', '.', '.', '.'],
+                ['.', '.', '.', '.', '.', 'O', '.', '.', 'T', 'C', 'M', '.'],
+                ['.', '.', 'C', 'O', 'R', 'N', 'E', 'L', 'L', '.', '.', '.'],
+                ['.', '.', 'O', '.', '.', 'S', '.', '.', 'U', '.', '.', '.'],
+                ['.', '.',
