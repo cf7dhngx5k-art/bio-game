@@ -14,11 +14,11 @@
       margin: 0;
       padding: 0;
       width: 100%;
-      height: 100vh;
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
-      overflow-x: auto; 
+      overflow-x: hidden; 
     }
 
     /* HEADER */
@@ -34,22 +34,26 @@
 
     /* ANCHOR CONTAINER */
     #anchor-container {
-      width: 250px; 
+      width: 260px; /* Slightly wider to prevent wrap */
       margin: 0 auto; 
       position: relative; 
-      overflow: visible; 
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
 
     /* GRID */
     .grid {
       display: grid;
-      grid-template-rows: repeat(6, 1fr);
+      grid-template-rows: repeat(6, auto); /* Changed to auto to force height */
       gap: 5px;
+      width: 100%;
     }
     .row {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
       gap: 5px;
+      width: 100%;
     }
     .tile {
       width: 46px;
@@ -63,6 +67,7 @@
       text-transform: uppercase;
       user-select: none;
       color: #000;
+      background: #fff; /* Ensure white background */
     }
 
     /* COLORS */
@@ -73,7 +78,7 @@
     /* HINTS COLUMN */
     #right-column {
       position: absolute;
-      left: 265px; 
+      left: 275px; 
       top: 0;
       width: 180px; 
       display: flex;
@@ -120,36 +125,35 @@
     
     /* NEW IMAGE BUTTON STYLE */
     .btn {
-      display: flex;             /* Centering the image */
+      display: flex;             
       justify-content: center;
       align-items: center;
-      margin: 15px auto 0 auto;  /* Centers button in popup */
-      width: 80px;               /* Fixed width */
-      height: 80px;              /* Fixed height */
+      margin: 15px auto 0 auto;  
+      width: 80px;               
+      height: 80px;              
       background: #000;
       border-radius: 12px;
       text-decoration: none;
-      overflow: hidden;          /* Crops image if too big */
+      overflow: hidden;          
     }
     
-    /* THE PAWN IMAGE ITSELF */
     .btn img {
       width: 100%;
       height: 100%;
-      object-fit: cover;         /* Ensures image fills the square nicely */
+      object-fit: cover;         
     }
 
     @keyframes popIn { from { transform: translate(-50%, -50%) scale(0.9); opacity: 0; } to { transform: translate(-50%, -50%) scale(1); opacity: 1; } }
     @keyframes fadeIn { from { opacity: 0; transform: translateX(10px); } to { opacity: 1; transform: translateX(0); } }
 
     /* MOBILE RESPONSIVE */
-    @media (max-width: 500px) {
-      #anchor-container { width: 100%; display: flex; flex-direction: column; align-items: center; }
+    @media (max-width: 600px) {
+      #anchor-container { width: 100%; max-width: 300px; }
       #right-column {
         position: static;
         width: 100%;
-        max-width: 250px;
         margin-top: 20px;
+        padding: 0 10px;
       }
     }
   </style>
@@ -179,55 +183,74 @@
   </div>
 
   <script>
-    const TARGET_WORD = "CHESS"; 
-    
-    // UPDATED PHRASES
-    const PHRASES = [
-      "What an intelligent starting guess! But no; the word is something I'm addicted to...",
-      "I'm flattered. But think of something that involves two people.",
-      "Ran out of intelligent guesses I see. Perhaps checkers would be more your style.",
-      "Keep trying. You can still be a grandmaster in not giving up.",
-      "This is sad. I think it best we go our separate ways.",
-      "You're still here?"
-    ];
-    
-    const MAX_GUESSES = 6;
-    let guesses = [];
-    let currentGuess = "";
-    let gameOver = false;
-    let wrongGuessCount = 0;
+    document.addEventListener("DOMContentLoaded", () => {
+        const TARGET_WORD = "CHESS"; 
+        
+        const PHRASES = [
+          "What an intelligent starting guess! But no; the word is something I'm addicted to...",
+          "I'm flattered. But think of something that involves two people.",
+          "Ran out of intelligent guesses I see. Perhaps checkers would be more your style.",
+          "Keep trying. You can still be a grandmaster in not giving up.",
+          "This is sad. I think it best we go our separate ways.",
+          "You're still here?"
+        ];
+        
+        const MAX_GUESSES = 6;
+        let guesses = [];
+        let currentGuess = "";
+        let gameOver = false;
+        let wrongGuessCount = 0;
 
-    const grid = document.getElementById("grid");
-    const rightCol = document.getElementById("right-column");
-    const bio = document.getElementById("bio-overlay");
+        const grid = document.getElementById("grid");
+        const rightCol = document.getElementById("right-column");
+        const bio = document.getElementById("bio-overlay");
 
-    function initGrid() {
-      if (!grid) return;
-      for (let i = 0; i < MAX_GUESSES; i++) {
-        let row = document.createElement("div");
-        row.className = "row";
-        for (let j = 0; j < 5; j++) {
-          let tile = document.createElement("div");
-          tile.className = "tile";
-          row.appendChild(tile);
+        function initGrid() {
+          if (!grid) {
+              console.error("Grid element not found!");
+              return;
+          }
+          grid.innerHTML = ""; // Clear existing grid just in case
+          for (let i = 0; i < MAX_GUESSES; i++) {
+            let row = document.createElement("div");
+            row.className = "row";
+            for (let j = 0; j < 5; j++) {
+              let tile = document.createElement("div");
+              tile.className = "tile";
+              row.appendChild(tile);
+            }
+            grid.appendChild(row);
+          }
         }
-        grid.appendChild(row);
-      }
-    }
 
-    function addPhrase() {
-      const phraseText = PHRASES[wrongGuessCount - 1];
-      if (phraseText) {
-        const box = document.createElement("div");
-        box.className = "phrase-box";
-        box.textContent = phraseText;
-        rightCol.appendChild(box);
-      }
-    }
+        function addPhrase() {
+          const phraseText = PHRASES[wrongGuessCount - 1];
+          if (phraseText) {
+            const box = document.createElement("div");
+            box.className = "phrase-box";
+            box.textContent = phraseText;
+            rightCol.appendChild(box);
+          }
+        }
 
-    function updateGrid() {
-      const row = grid.children[guesses.length];
-      for (let i = 0; i < 5; i++) {
-        row.children[i].textContent = currentGuess[i] || "";
-      }
-    }
+        function updateGrid() {
+          const row = grid.children[guesses.length];
+          for (let i = 0; i < 5; i++) {
+            row.children[i].textContent = currentGuess[i] || "";
+          }
+        }
+
+        function submitGuess() {
+          if (currentGuess.length !== 5) return;
+          const row = grid.children[guesses.length];
+          const targetArr = TARGET_WORD.split("");
+          const guessArr = currentGuess.split("");
+
+          guessArr.forEach((char, i) => {
+            if (char === targetArr[i]) {
+              row.children[i].classList.add("correct");
+              targetArr[i] = null;
+            }
+          });
+          guessArr.forEach((char, i) => {
+            if (!row.children[i].classList.contains("
